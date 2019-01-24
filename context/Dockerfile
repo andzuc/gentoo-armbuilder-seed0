@@ -33,8 +33,14 @@ RUN echo "ACCEPT_CHOSTS='${DOCKER_TARGET}'" >>/etc/portage/make.conf \
 #     sys-libs/glibc
 
 COPY --from=qemu /usr/bin/qemu-arm /builder/seed/usr/bin/
-RUN time "${DOCKER_TARGET}-emerge" -v --color n sys-libs/glibc app-shells/bash \
-    && emerge --root /builder/seed -v --color n --usepkgonly sys-libs/glibc app-shells/bash \
+RUN time "${DOCKER_TARGET}-emerge" -v --color n \
+    sys-libs/glibc \
+    sys-apps/coreutils \
+    app-shells/bash \
+    && emerge --root /builder/seed -v --color n --usepkgonly \
+	      sys-libs/glibc \
+	      sys-apps/coreutils \
+	      app-shells/bash \
     && chroot /builder/seed /usr/bin/qemu-arm --execve /usr/bin/qemu-arm /bin/bash -c '/bin/echo Hello from ARM container'
 
 # stage1: gcc (C only)
