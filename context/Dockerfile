@@ -23,15 +23,16 @@ ENV DOCKER_PKGLIST_SEED0=" \
 sys-devel/binutils \
 sys-kernel/linux-headers \
 sys-libs/glibc \
+sys-devel/gcc \
 sys-apps/coreutils \
 app-shells/bash"
 RUN time "${DOCKER_TARGET}-emerge" -v --color n ${DOCKER_PKGLIST_SEED0} \
     && emerge --root /builder/seed -v --color n --usepkgonly ${DOCKER_PKGLIST_SEED0}
 
 # seed0: emerge stage1 gcc (C only)
-RUN time USE="nls nptl pch pie ssp -cilk -cxx -debug -doc -fortran -go -graphite -hardened -jit -libssp -mpx -multilib -objc -objc++ -objc-gc -openmp -pgo -regression-test -sanitize -vanilla -vtv" \
-    "${DOCKER_TARGET}-emerge" -v --color n sys-devel/gcc \
-    && emerge --root /builder/seed -v --color n --usepkgonly sys-devel/gcc
+# RUN time USE="nls nptl pch pie ssp -cilk -cxx -debug -doc -fortran -go -graphite -hardened -jit -libssp -mpx -multilib -objc -objc++ -objc-gc -openmp -pgo -regression-test -sanitize -vanilla -vtv" \
+#     "${DOCKER_TARGET}-emerge" -v --color n sys-devel/gcc \
+#     && emerge --root /builder/seed -v --color n --usepkgonly sys-devel/gcc
 
 # ENV DOCKER_CFLAGS="-Ofast -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s -fomit-frame-pointer -pipe -fno-stack-protector -U_FORTIFY_SOURCE"
 # RUN sed -i \
