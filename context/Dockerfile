@@ -19,11 +19,18 @@ RUN echo "ACCEPT_CHOSTS='${DOCKER_TARGET}'" >>/etc/portage/make.conf \
     && mkdir -p /builder/seed
 
 # seed0: emerge base system 
+# https://wiki.gentoo.org/wiki/Porting
 ENV DOCKER_PKGLIST_SEED0=" \
 sys-devel/binutils \
 sys-kernel/linux-headers \
 sys-libs/glibc \
 sys-devel/gcc \
+dev-lang/python \
+net-misc/rsync \
+net-misc/wget \
+app-arch/tar \
+app-arch/gzip \
+app-arch/bzip2 \
 sys-apps/coreutils \
 app-shells/bash"
 RUN time "${DOCKER_TARGET}-emerge" -v --color n ${DOCKER_PKGLIST_SEED0} \
@@ -39,12 +46,9 @@ RUN time "${DOCKER_TARGET}-emerge" -v --color n ${DOCKER_PKGLIST_SEED0} \
 #     's/CFLAGS=".*"/CFLAGS="'"${DOCKER_CFLAGS}"'"/' \
 #     "/usr/${DOCKER_TARGET}/etc/portage/make.conf"
 
-# setup QEMU
-#RUN cp /usr/bin/qemu-arm "/usr/${DOCKER_TARGET}/usr/bin/qemu-arm"
-#RUN time emerge -v dev-util/catalyst
-
-#RUN catalyst -s "$(date +%Y.%m)"
 #COPY builder /builder
+#RUN time emerge -v dev-util/catalyst
+#RUN catalyst -s "$(date +%Y.%m)"
 
 # build @sysnodev
 #RUN "${DOCKER_TARGET}-emerge" --info
