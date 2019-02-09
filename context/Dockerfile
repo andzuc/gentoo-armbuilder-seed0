@@ -1,22 +1,25 @@
 FROM andzuc/gentoo-armbuilder-s4
 
 # seed0: config
-ENV DOCKER_ACCEPT_KEYWORDS="arm"
 ENV DOCKER_FEATURES="-sandbox -usersandbox buildpkg noman noinfo nodoc"
 ENV DOCKER_PROFILE=default/linux/arm/17.0/armv6j
 RUN echo "ACCEPT_CHOSTS='${DOCKER_TARGET}'" >>/etc/portage/make.conf \
     && sed -i \
-    's|PKGDIR=".*"|PKGDIR="'"/usr/${DOCKER_TARGET}/packages"'"|' \
-    "/etc/portage/make.conf" \
+	   's|PKGDIR=".*"|PKGDIR="'"/builder/packages"'"|' \
+	   "/etc/portage/make.conf" \
     && sed -i \
-    's/ACCEPT_KEYWORDS=".*"/ACCEPT_KEYWORDS="'"${DOCKER_ACCEPT_KEYWORDS}"'"/' \
-    "/usr/${DOCKER_TARGET}/etc/portage/make.conf" \
+	   's/ACCEPT_KEYWORDS="\(.*\)"/ACCEPT_KEYWORDS="'"\${ARCH}"'"/' \
+	   "/usr/${DOCKER_TARGET}/etc/portage/make.conf" \
     && sed -i \
-    's/FEATURES=".*"/FEATURES="'"${DOCKER_FEATURES}"'"/' \
-    "/usr/${DOCKER_TARGET}/etc/portage/make.conf" \
+	   's/FEATURES=".*"/FEATURES="'"${DOCKER_FEATURES}"'"/' \
+	   "/usr/${DOCKER_TARGET}/etc/portage/make.conf" \
+    && sed -i \
+	   's/USE="\(.*\)"/USE="'"\1 ccache"'"/' \
+	   "/usr/${DOCKER_TARGET}/etc/portage/make.conf" \
     && cat "/usr/${DOCKER_TARGET}/etc/portage/make.conf" \
     && ARCH=arm PORTAGE_CONFIGROOT="/usr/${DOCKER_TARGET}/" eselect profile set "${DOCKER_PROFILE}" \
-    && mkdir -p /builder/seed
+    && mkdir -p /builder/seed \
+    && mkdir -p /builder/packages
 
 # seed0: emerge base system 
 # https://wiki.gentoo.org/wiki/Porting
@@ -32,9 +35,12 @@ app-arch/tar \
 app-arch/gzip \
 app-arch/bzip2 \
 sys-apps/coreutils \
-app-shells/bash"
+app-shells/bash \
+dev-util/catalyst"
 RUN time "${DOCKER_TARGET}-emerge" -v --color n ${DOCKER_PKGLIST_SEED0} \
-    && emerge --root /builder/seed -v --color n --usepkgonly ${DOCKER_PKGLIST_SEED0}
+    && emerge --root /builder/seed -v --color n --usepkgonly ${DOCKER_PKGLIST_SEED0} \
+    && mkdir -p /builder/seed/etc/portage \
+    && cp "/usr/${DOCKER_TARGET}/etc/portage/make.conf" /builder/seed/etc/portage
 
 # seed0: emerge stage1 gcc (C only)
 # RUN time USE="nls nptl pch pie ssp -cilk -cxx -debug -doc -fortran -go -graphite -hardened -jit -libssp -mpx -multilib -objc -objc++ -objc-gc -openmp -pgo -regression-test -sanitize -vanilla -vtv" \
