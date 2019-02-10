@@ -8,13 +8,16 @@ RUN echo "ACCEPT_CHOSTS='${DOCKER_TARGET}'" >>/etc/portage/make.conf \
 	   's|PKGDIR=".*"|PKGDIR="'"/builder/packages"'"|' \
 	   "/etc/portage/make.conf" \
     && sed -i \
-	   's/ACCEPT_KEYWORDS="\(.*\)"/ACCEPT_KEYWORDS="'"\${ARCH}"'"/' \
+	   's|PKGDIR=.*|PKGDIR="'"/builder/packages"'"|' \
 	   "/usr/${DOCKER_TARGET}/etc/portage/make.conf" \
     && sed -i \
-	   's/FEATURES=".*"/FEATURES="'"${DOCKER_FEATURES}"'"/' \
+	   's!ACCEPT_KEYWORDS="\(.*\)"!ACCEPT_KEYWORDS="'"\${ARCH}"'"!' \
 	   "/usr/${DOCKER_TARGET}/etc/portage/make.conf" \
     && sed -i \
-	   's/USE="\(.*\)"/USE="'"\1"'"/' \
+	   's!FEATURES=".*"!FEATURES="'"${DOCKER_FEATURES}"'"!' \
+	   "/usr/${DOCKER_TARGET}/etc/portage/make.conf" \
+    && sed -i \
+	   's!USE="\(.*\)"!USE="'"\1"'"!' \
 	   "/usr/${DOCKER_TARGET}/etc/portage/make.conf" \
     && cat "/usr/${DOCKER_TARGET}/etc/portage/make.conf" \
     && ARCH=`cat "/usr/${DOCKER_TARGET}/etc/portage/make.conf"|grep "ARCH="|sed "s/ARCH=\(.*\)/\1/"` \
