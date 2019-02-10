@@ -14,10 +14,15 @@ RUN echo "ACCEPT_CHOSTS='${DOCKER_TARGET}'" >>/etc/portage/make.conf \
 	   's/FEATURES=".*"/FEATURES="'"${DOCKER_FEATURES}"'"/' \
 	   "/usr/${DOCKER_TARGET}/etc/portage/make.conf" \
     && sed -i \
-	   's/USE="\(.*\)"/USE="'"\1 ccache"'"/' \
+	   's/USE="\(.*\)"/USE="'"\1"'"/' \
 	   "/usr/${DOCKER_TARGET}/etc/portage/make.conf" \
     && cat "/usr/${DOCKER_TARGET}/etc/portage/make.conf" \
-    && ARCH=arm PORTAGE_CONFIGROOT="/usr/${DOCKER_TARGET}/" eselect profile set "${DOCKER_PROFILE}" \
+    && ARCH=`cat "/usr/${DOCKER_TARGET}/etc/portage/make.conf"|grep "ARCH="|sed "s/ARCH=\(.*\)/\1/"` \
+	   PORTAGE_CONFIGROOT="/usr/${DOCKER_TARGET}/" \
+	   eselect profile set "${DOCKER_PROFILE}" \
+    && ARCH=`cat "/usr/${DOCKER_TARGET}/etc/portage/make.conf"|grep "ARCH="|sed "s/ARCH=\(.*\)/\1/"` \
+	   PORTAGE_CONFIGROOT="/usr/${DOCKER_TARGET}/" \
+	   eselect profile show \
     && mkdir -p /builder/seed \
     && mkdir -p /builder/packages
 
@@ -35,12 +40,15 @@ app-arch/tar \
 app-arch/gzip \
 app-arch/bzip2 \
 sys-apps/coreutils \
-app-shells/bash \
-dev-util/catalyst"
+app-shells/bash"
 RUN time "${DOCKER_TARGET}-emerge" -v --color n ${DOCKER_PKGLIST_SEED0} \
-    && emerge --root /builder/seed -v --color n --usepkgonly ${DOCKER_PKGLIST_SEED0} \
-    && mkdir -p /builder/seed/etc/portage \
-    && cp "/usr/${DOCKER_TARGET}/etc/portage/make.conf" /builder/seed/etc/portage
+    && emerge --root /builder/seed -v --color n --usepkgonly ${DOCKER_PKGLIST_SEED0}
+
+RUN time mkdir -p /builder/seed/etc/portage \
+    && echo 'CHOST="'${DOCKER_TARGET}'"' >>/builder/seed/etc/portage/make.conf \
+    && cat /usr/${DOCKER_TARGET}/etc/portage/make.conf|grep "CFLAGS=" >>/builder/seed/etc/portage/make.conf \
+    && cat /usr/${DOCKER_TARGET}/etc/portage/make.conf|grep "CXXFLAGS=" >>/builder/seed/etc/portage/make.conf \
+    && cat /builder/seed/etc/portage/make.conf
 
 # seed0: emerge stage1 gcc (C only)
 # RUN time USE="nls nptl pch pie ssp -cilk -cxx -debug -doc -fortran -go -graphite -hardened -jit -libssp -mpx -multilib -objc -objc++ -objc-gc -openmp -pgo -regression-test -sanitize -vanilla -vtv" \
