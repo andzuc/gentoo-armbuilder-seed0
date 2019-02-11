@@ -52,7 +52,7 @@ RUN time mkdir -p /builder/seed/etc/portage \
     && cat /usr/${DOCKER_TARGET}/etc/portage/make.conf|grep "CFLAGS=" >>/builder/seed/etc/portage/make.conf \
     && cat /usr/${DOCKER_TARGET}/etc/portage/make.conf|grep "CXXFLAGS=" >>/builder/seed/etc/portage/make.conf \
     && cat /builder/seed/etc/portage/make.conf \
-    && ln -s "../../usr/portage/profiles/${DOCKER_PROFILE}" /builder/seed/etc/portage/etc/portage/make.profile
+    && ln -s "../../usr/portage/profiles/${DOCKER_PROFILE}" /builder/seed/etc/portage/make.profile
 
 # seed0: emerge stage1 gcc (C only)
 # RUN time USE="nls nptl pch pie ssp -cilk -cxx -debug -doc -fortran -go -graphite -hardened -jit -libssp -mpx -multilib -objc -objc++ -objc-gc -openmp -pgo -regression-test -sanitize -vanilla -vtv" \
