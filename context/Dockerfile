@@ -47,6 +47,12 @@ app-shells/bash"
 RUN time "${DOCKER_TARGET}-emerge" -v --color n ${DOCKER_PKGLIST_SEED0} \
     && emerge --root /builder/seed -v --color n --usepkgonly ${DOCKER_PKGLIST_SEED0}
 
+ENV DOCKER_PKGLIST_SEED1=" \
+sys-apps/portage"
+RUN time USE="build" "${DOCKER_TARGET}-emerge" -v --color n ${DOCKER_PKGLIST_SEED1} \
+    && emerge --root /builder/seed -v --color n --usepkgonly ${DOCKER_PKGLIST_SEED1}
+
+
 RUN time mkdir -p /builder/seed/etc/portage \
     && echo 'CHOST="'${DOCKER_TARGET}'"' >>/builder/seed/etc/portage/make.conf \
     && cat /usr/${DOCKER_TARGET}/etc/portage/make.conf|grep "CFLAGS=" >>/builder/seed/etc/portage/make.conf \
