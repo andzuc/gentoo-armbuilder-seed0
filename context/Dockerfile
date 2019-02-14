@@ -29,6 +29,8 @@ RUN echo "ACCEPT_CHOSTS='${DOCKER_TARGET}'" >>/etc/portage/make.conf \
     && mkdir -p /builder/seed \
     && mkdir -p /builder/packages
 
+COPY portage "/usr/${DOCKER_TARGET}/etc/portage"
+
 # seed0: emerge base system 
 # https://wiki.gentoo.org/wiki/Porting
 ENV DOCKER_PKGLIST_SEED0=" \
@@ -36,22 +38,18 @@ sys-devel/binutils \
 sys-kernel/linux-headers \
 sys-libs/glibc \
 sys-devel/gcc \
-dev-lang/python \
 net-misc/rsync \
 net-misc/wget \
 app-arch/tar \
 app-arch/gzip \
 app-arch/bzip2 \
+sys-apps/baselayout \
 sys-apps/coreutils \
-app-shells/bash"
+app-shells/bash \
+dev-lang/python \
+dev-vcs/git"
 RUN time "${DOCKER_TARGET}-emerge" -v --color n ${DOCKER_PKGLIST_SEED0} \
     && emerge --root /builder/seed -v --color n --usepkgonly ${DOCKER_PKGLIST_SEED0}
-
-ENV DOCKER_PKGLIST_SEED1=" \
-sys-apps/portage"
-RUN time USE="build" "${DOCKER_TARGET}-emerge" -v --color n ${DOCKER_PKGLIST_SEED1} \
-    && emerge --root /builder/seed -v --color n --usepkgonly ${DOCKER_PKGLIST_SEED1}
-
 
 RUN time mkdir -p /builder/seed/etc/portage \
     && echo 'CHOST="'${DOCKER_TARGET}'"' >>/builder/seed/etc/portage/make.conf \
