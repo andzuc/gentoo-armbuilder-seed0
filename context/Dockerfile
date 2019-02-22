@@ -20,10 +20,10 @@ RUN echo "ACCEPT_CHOSTS='${TC_TARGET}'" >>/etc/portage/make.conf \
 	   's!USE="\(.*\)"!USE="'"\1"'"!' \
 	   "/usr/${TC_TARGET}/etc/portage/make.conf" \
     && cat "/usr/${TC_TARGET}/etc/portage/make.conf" \
-    && ARCH=`cat "/usr/${TC_TARGET}/etc/portage/make.conf"|grep "ARCH="|sed "s/ARCH=\(.*\)/\1/"` \
+    && ARCH=`grep "ARCH=" "/usr/${TC_TARGET}/etc/portage/make.conf"|sed "s/ARCH=\(.*\)/\1/"` \
 	   PORTAGE_CONFIGROOT="/usr/${TC_TARGET}/" \
 	   eselect profile set "${TC_PROFILE}" \
-    && ARCH=`cat "/usr/${TC_TARGET}/etc/portage/make.conf"|grep "ARCH="|sed "s/ARCH=\(.*\)/\1/"` \
+    && ARCH=`grep "ARCH=" "/usr/${TC_TARGET}/etc/portage/make.conf"|sed "s/ARCH=\(.*\)/\1/"` \
 	   PORTAGE_CONFIGROOT="/usr/${TC_TARGET}/" \
 	   eselect profile show \
     && mkdir -p /builder/seed \
@@ -53,8 +53,8 @@ RUN time "${TC_TARGET}-emerge" -v --color n ${SEED_PKGLIST} \
 
 RUN time mkdir -p /builder/seed/etc/portage \
     && echo 'CHOST="'${TC_TARGET}'"' >>/builder/seed/etc/portage/make.conf \
-    && cat /usr/${TC_TARGET}/etc/portage/make.conf|grep "CFLAGS=" >>/builder/seed/etc/portage/make.conf \
-    && cat /usr/${TC_TARGET}/etc/portage/make.conf|grep "CXXFLAGS=" >>/builder/seed/etc/portage/make.conf \
+    && grep "CFLAGS=" /usr/${TC_TARGET}/etc/portage/make.conf >>/builder/seed/etc/portage/make.conf \
+    && grep "CXXFLAGS=" /usr/${TC_TARGET}/etc/portage/make.conf >>/builder/seed/etc/portage/make.conf \
     && cat /builder/seed/etc/portage/make.conf \
     && ln -s "../../usr/portage/profiles/${TC_PROFILE}" /builder/seed/etc/portage/make.profile
 
