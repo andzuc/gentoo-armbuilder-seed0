@@ -20,12 +20,9 @@ RUN echo "ACCEPT_CHOSTS='${TC_TARGET}'" >>/etc/portage/make.conf \
 	   's!USE="\(.*\)"!USE="'"\1"'"!' \
 	   "/usr/${TC_TARGET}/etc/portage/make.conf" \
     && cat "/usr/${TC_TARGET}/etc/portage/make.conf" \
-    && ARCH=`grep "ARCH=" "/usr/${TC_TARGET}/etc/portage/make.conf"|sed "s/ARCH=\(.*\)/\1/"` \
-	   PORTAGE_CONFIGROOT="/usr/${TC_TARGET}/" \
-	   eselect profile set "${TC_PROFILE}" \
-    && ARCH=`grep "ARCH=" "/usr/${TC_TARGET}/etc/portage/make.conf"|sed "s/ARCH=\(.*\)/\1/"` \
-	   PORTAGE_CONFIGROOT="/usr/${TC_TARGET}/" \
-	   eselect profile show \
+    && ( ARCH=`PORTAGE_CONFIGROOT=/usr/${TC_TARGET}/ portageq envvar ARCH` \
+	     PORTAGE_CONFIGROOT="/usr/${TC_TARGET}/" \
+	     eselect profile set "${TC_PROFILE}"; eselect profile show ) \
     && mkdir -p /builder/seed \
     && mkdir -p /builder/packages
 
