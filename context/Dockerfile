@@ -55,6 +55,17 @@ RUN time mkdir -p /builder/seed/etc/portage \
     && cat /builder/seed/etc/portage/make.conf \
     && ln -s "../../usr/portage/profiles/${TC_PROFILE}" /builder/seed/etc/portage/make.profile
 
+RUN mkdir -p /builder/ext/resin \
+    && git clone https://github.com/balena-io-library/armv7hf-debian-qemu.git /builder/ext/resin \
+    && ( export ARCH=`PORTAGE_CONFIGROOT=/usr/${TC_TARGET}/ portageq envvar ARCH`; \
+	 sed -i 's!/usr/bin/qemu-.*-static!/emu/qemu-'"${ARCH}"'!' \
+	     "/builder/ext/resin/resin-xbuild.go"; \
+	 sed -i 's|"-execve", "-0"|"-execve", "/emu/qemu-'"${ARCH}"'", "-0"|' \
+	     "/builder/ext/resin/resin-xbuild.go" ) \
+    && ( cd /builder/ext/resin; ./build.sh )
+
+COPY --from=andzuc/gentoo-armqemu /usr/bin/qemu-* /builder/ext/qemu
+
 # seed0: emerge stage1 gcc (C only)
 # RUN time USE="nls nptl pch pie ssp -cilk -cxx -debug -doc -fortran -go -graphite -hardened -jit -libssp -mpx -multilib -objc -objc++ -objc-gc -openmp -pgo -regression-test -sanitize -vanilla -vtv" \
 #     "${TC_TARGET}-emerge" -v --color n sys-devel/gcc \
