@@ -64,7 +64,7 @@ RUN mkdir -p /builder/ext/resin \
 	     "/builder/ext/resin/resin-xbuild.go" ) \
     && ( cd /builder/ext/resin; ./build.sh )
 
-COPY --from=andzuc/gentoo-armqemu /usr/bin/qemu-* /builder/ext/qemu
+COPY --from=andzuc/gentoo-armqemu /usr/bin/qemu-* /builder/ext/qemu/
 
 # seed0: emerge stage1 gcc (C only)
 # RUN time USE="nls nptl pch pie ssp -cilk -cxx -debug -doc -fortran -go -graphite -hardened -jit -libssp -mpx -multilib -objc -objc++ -objc-gc -openmp -pgo -regression-test -sanitize -vanilla -vtv" \
