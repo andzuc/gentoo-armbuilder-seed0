@@ -42,6 +42,7 @@ app-arch/gzip \
 app-arch/bzip2 \
 sys-apps/baselayout \
 sys-apps/coreutils \
+sys-apps/findutils \
 app-shells/bash \
 dev-lang/python \
 dev-vcs/git"
