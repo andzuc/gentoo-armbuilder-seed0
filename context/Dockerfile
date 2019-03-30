@@ -43,6 +43,7 @@ app-arch/bzip2 \
 sys-apps/baselayout \
 sys-apps/coreutils \
 sys-apps/findutils \
+sys-apps/grep \
 app-shells/bash \
 dev-lang/python \
 dev-vcs/git"
@@ -71,11 +72,6 @@ COPY --from=andzuc/gentoo-armqemu /usr/bin/qemu-* /builder/ext/qemu/
 # RUN time USE="nls nptl pch pie ssp -cilk -cxx -debug -doc -fortran -go -graphite -hardened -jit -libssp -mpx -multilib -objc -objc++ -objc-gc -openmp -pgo -regression-test -sanitize -vanilla -vtv" \
 #     "${TC_TARGET}-emerge" -v --color n sys-devel/gcc \
 #     && emerge --root /builder/seed -v --color n --usepkgonly sys-devel/gcc
-
-# ENV DOCKER_CFLAGS="-Ofast -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s -fomit-frame-pointer -pipe -fno-stack-protector -U_FORTIFY_SOURCE"
-# RUN sed -i \
-#     's/CFLAGS=".*"/CFLAGS="'"${DOCKER_CFLAGS}"'"/' \
-#     "/usr/${TC_TARGET}/etc/portage/make.conf"
 
 #COPY builder /builder
 #RUN time emerge -v dev-util/catalyst
