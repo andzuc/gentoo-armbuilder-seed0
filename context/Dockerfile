@@ -44,6 +44,8 @@ sys-apps/baselayout \
 sys-apps/coreutils \
 sys-apps/findutils \
 sys-apps/grep \
+sys-apps/gawk \
+sys-devel/patch \
 app-shells/bash \
 dev-lang/python \
 dev-vcs/git"
