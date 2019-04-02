@@ -34,6 +34,7 @@ ENV SEED_PKGLIST=" \
 sys-devel/binutils \
 sys-kernel/linux-headers \
 sys-libs/glibc \
+sys-libs/db \
 sys-devel/gcc \
 net-misc/rsync \
 net-misc/wget \
