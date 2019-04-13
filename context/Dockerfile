@@ -47,6 +47,7 @@ sys-apps/grep \
 sys-apps/gawk \
 sys-devel/patch \
 sys-devel/make \
+app-misc/pax-utils \
 app-shells/bash \
 dev-lang/python \
 dev-vcs/git"
